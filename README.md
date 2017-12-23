@@ -77,7 +77,7 @@ $ vendomatic --config=myconfig.json
     "display_xlim": [-20,20],
     "display_ylim": [-20,20],
     "path_color": "b",
-    "path_window" : 60.0*60.0*10.0,
+    "path_window" : 36000,
     "stim_inner_color": "r",
     "stim_outer_color": "g",
     "stim_inner_radius": 2.0,   
