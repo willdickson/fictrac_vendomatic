@@ -111,11 +111,11 @@ class FicTracVendomatic:
                 else:
                     self.display.set_stim_enabled(False)
 
-            if self.protocol.pulse_on:
-                self.trigger_device.set_high()
-            else:
-                self.trigger_device.set_low()
-        
+                if self.protocol.pulse_on:
+                    self.trigger_device.set_high()
+                else:
+                    self.trigger_device.set_low()
+
             self.display.update(self.data)
 
 

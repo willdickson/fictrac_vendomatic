@@ -15,12 +15,20 @@ class TriggerDevice(serial.Serial):
         param = {'baudrate': self.Baudrate, 'timeout': timeout}
         super(TriggerDevice,self).__init__(port,**param)
         time.sleep(self.ResetSleepDt)
+        self.is_high = None
+        self.set_low();
 
     def set_low(self):
-        self.write('[{0}]\n'.format(self.CmdSetTriggerLow))
+        if (self.is_high is None) or self.is_high:
+            print('*** set low ***')
+            self.write('[{0}]\n'.format(self.CmdSetTriggerLow))
+            self.is_high = False
 
     def set_high(self):
-        self.write('[{0}]\n'.format(self.CmdSetTriggerHigh))
+        if (self.is_high is None) or not self.is_high:
+            print('*** set low ***')
+            self.write('[{0}]\n'.format(self.CmdSetTriggerHigh))
+            self.is_high = True
 
 
 # ------------------------------------------------------------------------------
