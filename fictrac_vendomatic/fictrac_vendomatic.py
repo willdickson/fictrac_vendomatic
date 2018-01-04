@@ -7,16 +7,17 @@ import json
 import threading
 import Queue
 import math
-import atexit
+import signal
 
 import utils
 from fly_data import FlyData
 from trigger_device import TriggerDevice
 from protocol import Protocol
 from basic_display import BasicDisplay
+from h5_logger import H5Logger
 
 
-class FicTracVendomatic:
+class FicTracVendomatic(object):
 
     """
     Implements the vendomatic experiments. Receives position and heading data from 
@@ -25,6 +26,12 @@ class FicTracVendomatic:
     via the experimental protocol and defined in by the Protocol class in protocol.py. 
 
     See protocol.py for a description and  summary of the relevant parameters.
+
+
+    #########################################################################
+    TODO:  Add parameters, packaged as JSON string, as attribute to log file.
+    #########################################################################
+
     """
 
     default_param = {
@@ -47,8 +54,11 @@ class FicTracVendomatic:
             'stim_pulse_off_window': 9.0,
             'protocol_reset_window': 15.0,
             'trigger_device_port': '/dev/ttyUSB0',
+            'logfile_name': 'data.hdf5',
+            'logfile_auto_incr': True, 
+            'logfile_auto_incr_format': '{0:06d}',
+            'logfile_dt': 0.01,
             }
-
 
 
     def __init__(self,param = default_param):
@@ -57,6 +67,11 @@ class FicTracVendomatic:
         self.data = FlyData(self.param)
         self.display = BasicDisplay(self.param)
         self.protocol = Protocol(self.param)
+        self.logger = H5Logger(
+                filename = self.param['logfile_name'],
+                auto_incr = self.param['logfile_auto_incr'],
+                auto_incr_format = self.param['logfile_auto_incr_format'],
+                )
         self.reset()
 
         self.trigger_device = TriggerDevice(self.param['trigger_device_port'])
@@ -71,12 +86,16 @@ class FicTracVendomatic:
         self.redis_worker.daemon = True
         self.redis_worker.start()
 
+        self.done = False
+        signal.signal(signal.SIGINT,self.sigint_handler)
+
     def reset(self):
         self.data.reset()
         self.protocol.reset()
         self.display.reset()
         self.time_start = time.time()
-        self.time_now = time.time()
+        self.time_now = self.time_start 
+        self.time_log = None 
 
     @property
     def time_elapsed(self):
@@ -84,9 +103,9 @@ class FicTracVendomatic:
 
     def run(self):
 
-        while True:
-            # Pull latest redis message from queue
+        while not self.done:
 
+            # Pull latest redis message from queue
             while self.message_queue.qsize() > 0:
 
                 self.time_now = time.time()
@@ -103,18 +122,28 @@ class FicTracVendomatic:
                     self.message_switchyard(message)
 
                 self.protocol.update(self.time_elapsed, self.data)
-                if self.protocol.active: 
-                    self.display.set_stim_center(self.protocol.stim_x, self.protocol.stim_y) 
-                    self.display.set_stim_enabled(True)
-                else:
-                    self.display.set_stim_enabled(False)
 
                 if self.protocol.pulse_on:
                     self.trigger_device.set_high()
                 else:
                     self.trigger_device.set_low()
 
+                self.write_logfile()
+
+            # Update display
+            if self.protocol.active: 
+                self.display.set_stim_center(self.protocol.stim_x, self.protocol.stim_y) 
+                self.display.set_stim_enabled(True)
+            else:
+                self.display.set_stim_enabled(False)
+
             self.display.update(self.data)
+
+
+        # Run complete 
+        utils.flush_print('Run finshed - quiting!')
+        self.clean_up()
+
 
 
     def message_switchyard(self,message):
@@ -140,7 +169,7 @@ class FicTracVendomatic:
         self.data.add(self.time_elapsed, message)
 
         utils.flush_print('time          = {0:1.3f}'.format(self.time_elapsed))
-        utils.flush_print('frame         = {0:1.3f}'.format(self.time_elapsed))
+        utils.flush_print('frame         = {0}'.format(self.data.frame))
         utils.flush_print('pos x         = {0:1.3f}'.format(self.data.posx))
         utils.flush_print('pos y         = {0:1.3f}'.format(self.data.posy))
         utils.flush_print('path_len      = {0:1.3f}'.format(self.data.path_len))
@@ -171,10 +200,33 @@ class FicTracVendomatic:
             message = json.loads(item['data'])
             self.message_queue.put(message)
 
+    def write_logfile(self):
+        if self.time_log is None or ((self.time_elapsed - self.time_log) >  self.param['logfile_dt']):
+            self.time_log = self.time_elapsed
+            log_data = { 
+                    'time': self.time_elapsed,
+                    'frame': self.data.frame,
+                    'posx': self.data.posx,
+                    'posy': self.data.posy,
+                    'velx': self.data.velx,
+                    'vely': self.data.vely,
+                    'path_len': self.data.path_len,
+                    'ready': int(self.protocol.ready),
+                    'win_dist': self.protocol.get_window_distance(self.time_elapsed, self.data),
+                    'active': int(self.protocol.active),
+                    'outside_dt': self.time_elapsed - self.protocol.time_outer_circle,
+                    'pulse_on': int(self.protocol.pulse_on),
+                    'pulse_on_dt': self.time_elapsed - self.protocol.time_pulse_on,
+                    'stimx': self.protocol.stim_x,
+                    'stimy': self.protocol.stim_y,
+                    }
+            self.logger.add(log_data)
+
+    def sigint_handler(self, signum, frame):
+        self.done = True
+
     def clean_up(self):
+        self.logger.reset()
         if self.trigger_device.isOpen():
             self.trigger_device.set_low()
-
-
-
 

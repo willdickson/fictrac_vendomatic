@@ -1,6 +1,6 @@
 import utils
 
-class FlyData:
+class FlyData(object):
 
     zero_data = {
             'frame': 0,

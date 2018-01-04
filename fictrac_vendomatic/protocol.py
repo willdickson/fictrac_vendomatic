@@ -1,7 +1,8 @@
+from __future__ import print_function
 import utils
 
 
-class Protocol:
+class Protocol(object):
     """
     Implements experimental protocol ... TODO: description
 
@@ -111,18 +112,21 @@ class Protocol:
             self.reset()
 
     def get_window_distance(self,t,data):
-        n = len(data.time_list)-1
-        done = False
-        while not done: 
-            test0 = (t - data.time_list[n]) >= self.param['stim_threshold_window']
-            test1 = (data.time_list[n] - self.time_start) <= self.param['stim_startup_delay']
-            if test0 or test1 or n==0:
-                done = True
-            else:
-                n -= 1
-        p = data.posx, data.posy
-        q = data.posx_list[n], data.posy_list[n]
-        return utils.distance(p,q)
+        n = max([len(data.time_list)-1,0])
+        if n > 0:
+            done = False
+            while not done: 
+                test0 = (t - data.time_list[n]) >= self.param['stim_threshold_window']
+                test1 = (data.time_list[n] - self.time_start) <= self.param['stim_startup_delay']
+                if test0 or test1 or n==0:
+                    done = True
+                else:
+                    n -= 1
+            p = data.posx, data.posy
+            q = data.posx_list[n], data.posy_list[n]
+            return utils.distance(p,q)
+        else:
+            return 0.0
 
 
     def is_inside_inner_circle(self,data):

@@ -9,7 +9,7 @@ from utils import radToDeg
 
 
 
-class RandomFly:
+class RandomFly(object):
 
     default_param = {
             'max_speed': 2.0,

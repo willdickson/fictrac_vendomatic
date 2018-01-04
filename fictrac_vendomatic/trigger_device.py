@@ -20,13 +20,11 @@ class TriggerDevice(serial.Serial):
 
     def set_low(self):
         if (self.is_high is None) or self.is_high:
-            print('*** set low ***')
             self.write('[{0}]\n'.format(self.CmdSetTriggerLow))
             self.is_high = False
 
     def set_high(self):
         if (self.is_high is None) or not self.is_high:
-            print('*** set low ***')
             self.write('[{0}]\n'.format(self.CmdSetTriggerHigh))
             self.is_high = True
 

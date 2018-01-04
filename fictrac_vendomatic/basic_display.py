@@ -1,7 +1,7 @@
 import numpy
 import matplotlib.pyplot as plt
 
-class BasicDisplay:
+class BasicDisplay(object):
 
     def __init__(self, param):
 
