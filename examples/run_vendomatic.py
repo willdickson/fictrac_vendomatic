@@ -20,6 +20,10 @@ param = {
         'stim_pulse_off_window': 9.0,
         'protocol_reset_window': 15.0,
         'trigger_device_port': '/dev/ttyUSB0', 
+        'logfile_name': 'data.hdf5',
+        'logfile_auto_incr': True, 
+        'logfile_auto_incr_format': '{0:06d}',
+        'logfile_dt': 0.01,
         }
 
 client = FicTracVendomatic(param=param)
