@@ -76,7 +76,10 @@ class H5Logger(object):
             self.h5file = h5py.File(next_filename,'w')
             self.dataset_dict = {}
             for key,val in data.iteritems():
-                val_as_np = convert_to_np(val)
+                if not type(val) == np.ndarray:
+                    val_as_np = convert_to_np(val)
+                else:
+                    val_as_np = np.reshape(val, (1,) + val.shape)
                 dtype = val_as_np.dtype
                 shape = (1,) + val_as_np.shape[1:]
                 maxshape = (None,) + val_as_np.shape[1:]
@@ -101,7 +104,11 @@ class H5Logger(object):
                 shape = self.dataset_dict[key].shape
                 num_vals = shape[0]
                 self.dataset_dict[key].resize((num_vals+1,) + shape[1:])
-                self.dataset_dict[key][num_vals] = convert_to_np(val)
+                if not type(val) == np.ndarray:
+                    val_as_np = convert_to_np(val)
+                else:
+                    val_as_np = np.reshape(val, (1,) + val.shape) 
+                self.dataset_dict[key][num_vals] = val_as_np
 
 
 # Utility functions
