@@ -1,9 +1,13 @@
 import numpy
+import matplotlib
 import matplotlib.pyplot as plt
+
+PLT_REQUIRES_PAUSE = matplotlib.__version__ < '1.5.1'
 
 class BasicDisplay(object):
 
     def __init__(self, param):
+
 
         self.path_color = param['path_color']
         self.xlim_init = param['display_xlim'] 
@@ -32,12 +36,16 @@ class BasicDisplay(object):
         self.reset()
 
         self.fig.canvas.flush_events()
+        if PLT_REQUIRES_PAUSE:  
+            plt.pause(0.0001)
 
     def update(self,data):
         self.draw_stim_circ()
         self.draw_path(data)
         self.set_xylim(data)
         self.fig.canvas.flush_events()
+        if PLT_REQUIRES_PAUSE:
+            plt.pause(0.0001)
 
     def draw_path(self,data):
         self.pos_line.set_xdata(data.posx_list)
@@ -95,4 +103,6 @@ class BasicDisplay(object):
         self.ax.set_xlim(*self.xlim)
         self.ax.set_ylim(*self.ylim)
         self.fig.canvas.flush_events()
+        if PLT_REQUIRES_PAUSE:
+            plt.pause(0.0001)
     
