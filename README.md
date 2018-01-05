@@ -6,7 +6,7 @@ fly enters a particular region.
 
 ## Installation
 
-You neead python-redis, python-serial, python-numpy, arrow
+Requirements: python-redis, python-serial, python-numpy, python-matplotlib, arrow
 
 ```bash
 $ python setup.py install 
