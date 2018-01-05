@@ -84,7 +84,7 @@ $ vendomatic --config=myconfig.json
     "logfile_name": "data.hdf5",
     "logfile_auto_incr": true, 
     "logfile_auto_incr_format": "{0:06d}",
-    "logfile_dt": 0.01,
+    "logfile_dt": 0.01
 }
 
 ```
