@@ -1,6 +1,7 @@
 from __future__ import print_function
 import sys
 import h5py
+import json
 import matplotlib.pyplot as plt
 
 filename = sys.argv[1]
@@ -10,27 +11,35 @@ print()
 print('datasets')
 print('--------')
 for name in h5file:
-    print('  {0}, {1}, {2}'.format(name,h5file[name].shape,h5file[name].dtype))
+    print('  {0}, shape={1}, dtype={2}'.format(name,h5file[name].shape,h5file[name].dtype))
 print()
 
 print('attrs')
 print('-----')
 for k,v in h5file.attrs.iteritems():
-    print(k,v)
+    if not k == 'jsonparam':
+        print('{0}: {1}'.format(k,v))
+    else:
+        print('{0}:'.format(k))
+        param = json.loads(v)
+        for kk,vv in param.iteritems():
+            print('  {0}: {1}'.format(kk,vv))
 print()
 
 
 plt.figure(1)
-plt.subplot(511)
+plt.subplot(611)
 plt.plot(h5file['time'], h5file['posx'])
-plt.subplot(512)
+plt.subplot(612)
 plt.plot(h5file['time'], h5file['posy'])
-plt.subplot(513)
+plt.subplot(613)
 plt.plot(h5file['time'], h5file['velx'])
-plt.subplot(514)
+plt.subplot(614)
 plt.plot(h5file['time'], h5file['vely'])
-plt.subplot(515)
-plt.plot(h5file['time'], h5file['active'])
+plt.subplot(615)
+plt.plot(h5file['time'], h5file['pulse_on'])
+plt.subplot(616)
+plt.plot(h5file['time'], h5file['pulse_on_dt'])
 plt.show()
 
 

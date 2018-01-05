@@ -6,18 +6,26 @@ import os.path
 import h5py
 import numpy as np
 import arrow
+import json
 
 
 class H5Logger(object):
 
     Default_Auto_Incr_Format = '{0:06d}'
 
-    def __init__(self,filename='data.hdf5',auto_incr=False, auto_incr_format=Default_Auto_Incr_Format):
+    def __init__(
+            self,
+            filename='data.hdf5',
+            auto_incr=False, 
+            auto_incr_format=Default_Auto_Incr_Format,
+            param_attr = None
+            ):
         self.auto_incr = auto_incr
         self.auto_incr_format = auto_incr_format
         self.h5file = None
         self.dataset_dict = None 
         self.filename = filename
+        self.param_attr = param_attr
 
     @property
     def filename(self):
@@ -79,6 +87,11 @@ class H5Logger(object):
             now = arrow.now()
             self.h5file.attrs['timestamp'] = now.timestamp
             self.h5file.attrs['datetime'] = now.format('YYYY-MM-DD HH:mm:ss')
+
+            # Add parameter attribute is it exists
+            if self.param_attr is not None:
+                jsonparam = json.dumps(self.param_attr)
+                self.h5file.attrs['jsonparam'] = jsonparam
 
         else:
             # Add data to existing hdf5 file dataset_dict

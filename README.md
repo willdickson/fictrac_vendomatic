@@ -6,7 +6,7 @@ fly enters a particular region.
 
 ## Installation
 
-You neead python-redis and python-serial
+You neead python-redis, python-serial, python-numpy, arrow
 
 ```bash
 $ python setup.py install 

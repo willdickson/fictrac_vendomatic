@@ -71,6 +71,7 @@ class FicTracVendomatic(object):
                 filename = self.param['logfile_name'],
                 auto_incr = self.param['logfile_auto_incr'],
                 auto_incr_format = self.param['logfile_auto_incr_format'],
+                param_attr = self.param
                 )
         self.reset()
 
@@ -141,6 +142,7 @@ class FicTracVendomatic(object):
 
 
         # Run complete 
+        utils.flush_print()
         utils.flush_print('Run finshed - quiting!')
         self.clean_up()
 
