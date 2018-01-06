@@ -10,8 +10,9 @@ class Protocol(object):
 
       stim_inner_radius             - inner radius for stim - fly need to enter this trigger stimuls pulses
       stim_outer_radius             - outer radius for stim - protocol not reset if fly stays inside circle 
+      stim_startup_delay            - minimum elapsed time before stim can start 
       stim_startup_path_length      - minimum path length before stim can start
-      stim_threshold_distance       - distance threshold for triggering stim (measured over threshold window)
+      stim_threshold_distance       - point-to-point distance threshold for triggering stim (measured over threshold window)
       stim_threshold_window         - time window over which threhold distance is measured
       stim_pulse_on_window          - time window for pulse on
       tim_pulse_off_window          - time window for pulse off (always off for at least this long after being on)
