@@ -3,6 +3,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 PLT_REQUIRES_PAUSE = matplotlib.__version__ < '1.5.1'
+PLT_PAUSE = 0.0001
 
 class BasicDisplay(object):
 
@@ -37,7 +38,7 @@ class BasicDisplay(object):
 
         self.fig.canvas.flush_events()
         if PLT_REQUIRES_PAUSE:  
-            plt.pause(0.0001)
+            plt.pause(PLT_PAUSE)
 
     def update(self,data):
         self.draw_stim_circ()
@@ -45,7 +46,7 @@ class BasicDisplay(object):
         self.set_xylim(data)
         self.fig.canvas.flush_events()
         if PLT_REQUIRES_PAUSE:
-            plt.pause(0.0001)
+            plt.pause(PLT_PAUSE)
 
     def draw_path(self,data):
         self.pos_line.set_xdata(data.posx_list)
@@ -104,5 +105,5 @@ class BasicDisplay(object):
         self.ax.set_ylim(*self.ylim)
         self.fig.canvas.flush_events()
         if PLT_REQUIRES_PAUSE:
-            plt.pause(0.0001)
+            plt.pause(PLT_PAUSE)
     

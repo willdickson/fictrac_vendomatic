@@ -36,7 +36,6 @@ class FicTracVendomatic(object):
 
     default_param = {
             'redis_channel': 'fictrac',
-            'loop_dt': 0.001,
             'ball_radius': 1.0,
             'display_xlim': (-20,20),
             'display_ylim': (-20,20),

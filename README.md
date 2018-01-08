@@ -20,7 +20,6 @@ $ python setup.py install
 from fictrac_vendomatic import FicTracVendomatic
 param = { 
         'redis_channel': 'fictrac',
-        'loop_dt': 0.001,
         'ball_radius': 1.0,
         'display_xlim': (-20,20),
         'display_ylim': (-20,20),
@@ -63,7 +62,6 @@ $ vendomatic --config=myconfig.json
 ```json
 { 
     "redis_channel": "fictrac",
-    "loop_dt": 0.001,
     "ball_radius": 1.0,
     "display_xlim": [-20,20],
     "display_ylim": [-20,20],
