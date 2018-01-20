@@ -43,7 +43,7 @@ param = {
         'logfile_dt': 0.01,
          }
 
-client = FictracVendomatic()
+client = FictracVendomatic(param=param)
 client.run()
 
 ```
