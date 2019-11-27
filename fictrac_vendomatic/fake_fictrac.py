@@ -4,8 +4,8 @@ import time
 import json
 import math
 import random
-from utils import degToRad 
-from utils import radToDeg
+from .utils import degToRad 
+from .utils import radToDeg
 
 
 

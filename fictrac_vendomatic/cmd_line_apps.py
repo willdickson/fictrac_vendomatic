@@ -1,8 +1,8 @@
 from __future__ import print_function
 import argparse
 import json
-from fictrac_vendomatic import FicTracVendomatic
-from fake_fictrac import FakeFicTrac
+from .fictrac_vendomatic import FicTracVendomatic
+from .fake_fictrac import FakeFicTrac
 
 def vendomatic_app():
 

@@ -20,12 +20,12 @@ class TriggerDevice(serial.Serial):
 
     def set_low(self):
         if (self.is_high is None) or self.is_high:
-            self.write('[{0}]\n'.format(self.CmdSetTriggerLow))
+            self.write('[{0}]\n'.format(self.CmdSetTriggerLow).encode())
             self.is_high = False
 
     def set_high(self):
         if (self.is_high is None) or not self.is_high:
-            self.write('[{0}]\n'.format(self.CmdSetTriggerHigh))
+            self.write('[{0}]\n'.format(self.CmdSetTriggerHigh).encode())
             self.is_high = True
 
 

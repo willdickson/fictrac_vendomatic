@@ -2,7 +2,7 @@ from fictrac_vendomatic import FicTracVendomatic
 
 param = { 
         'redis_channel': 'fictrac',
-        'ball_radius': 1.0,
+        'ball_radius': 4.5,
         'display_xlim': (-20,20),
         'display_ylim': (-20,20),
         'path_color': 'b',

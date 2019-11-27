@@ -1,5 +1,5 @@
 from __future__ import print_function
-import utils
+from . import utils
 
 
 class Protocol(object):

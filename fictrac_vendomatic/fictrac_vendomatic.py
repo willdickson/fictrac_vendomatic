@@ -5,16 +5,16 @@ import time
 import redis
 import json
 import threading
-import Queue
+import queue
 import math
 import signal
 
-import utils
-from fly_data import FlyData
-from trigger_device import TriggerDevice
-from protocol import Protocol
-from basic_display import BasicDisplay
-from h5_logger import H5Logger
+from . import utils
+from .fly_data import FlyData
+from .trigger_device import TriggerDevice
+from .protocol import Protocol
+from .basic_display import BasicDisplay
+from .h5_logger import H5Logger
 
 
 class FicTracVendomatic(object):
@@ -78,7 +78,7 @@ class FicTracVendomatic(object):
         self.trigger_device.set_low()
 
         # Setup message queue, redis and worker thread
-        self.message_queue = Queue.Queue()
+        self.message_queue = queue.Queue()
         self.redis_client = redis.StrictRedis()
         self.redis_pubsub = self.redis_client.pubsub()
         self.redis_pubsub.subscribe(self.param['redis_channel'])
@@ -115,7 +115,7 @@ class FicTracVendomatic(object):
                 try:
                     message = self.message_queue.get(False)
                     have_new_message = True
-                except Queue.Empty: 
+                except queue.Empty: 
                     pass 
 
                 if have_new_message: 
@@ -142,7 +142,7 @@ class FicTracVendomatic(object):
 
         # Run complete 
         utils.flush_print()
-        utils.flush_print('Run finshed - quiting!')
+        utils.flush_print('Run finished - quiting!')
         self.clean_up()
 
 
@@ -153,7 +153,7 @@ class FicTracVendomatic(object):
         elif message['type'] == 'data':
             self.on_data_message(message)
         else:
-            utils.flush_print('unkwon message type')
+            utils.flush_print('unknown message type')
 
     def on_reset_message(self,message):
         #utils.flush_print('reset')
@@ -168,7 +168,7 @@ class FicTracVendomatic(object):
         message['vely'] *= self.param['ball_radius']
 
         self.data.add(self.time_elapsed, message)
-
+        print('hello')
         utils.flush_print('time          = {0:1.3f}'.format(self.time_elapsed))
         utils.flush_print('frame         = {0}'.format(self.data.frame))
         utils.flush_print('pos x         = {0:1.3f}'.format(self.data.posx))
